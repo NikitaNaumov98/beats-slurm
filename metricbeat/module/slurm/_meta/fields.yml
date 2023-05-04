@@ -1,0 +1,10 @@
+- key: slurm
+  title: "slurm"
+  release: beta
+  description: >
+    slurm module
+  fields:
+    - name: slurm
+      type: group
+      description: >
+      fields:
