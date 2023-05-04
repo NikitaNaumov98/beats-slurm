@@ -268,6 +268,9 @@ This file is generated! See scripts/mage/docs_collector.go
 |<<metricbeat-module-redisenterprise,Redis Enterprise>>  beta[]   |image:./images/icon-yes.png[Prebuilt dashboards are available]    |  
 .2+| .2+|  |<<metricbeat-metricset-redisenterprise-node,node>> beta[]  
 |<<metricbeat-metricset-redisenterprise-proxy,proxy>> beta[]  
+|<<metricbeat-module-slurm,slurm>>  beta[]   |image:./images/icon-no.png[No prebuilt dashboards]    |  
+.2+| .2+|  |<<metricbeat-metricset-slurm-job_cpu,job_cpu>> beta[]  
+|<<metricbeat-metricset-slurm-job_mem,job_mem>> beta[]  
 |<<metricbeat-module-sql,SQL>>     |image:./images/icon-no.png[No prebuilt dashboards]    |  
 .1+| .1+|  |<<metricbeat-metricset-sql-query,query>>   
 |<<metricbeat-module-stan,Stan>>     |image:./images/icon-yes.png[Prebuilt dashboards are available]    |  
@@ -376,6 +379,7 @@ include::modules/prometheus.asciidoc[]
 include::modules/rabbitmq.asciidoc[]
 include::modules/redis.asciidoc[]
 include::modules/redisenterprise.asciidoc[]
+include::modules/slurm.asciidoc[]
 include::modules/sql.asciidoc[]
 include::modules/stan.asciidoc[]
 include::modules/statsd.asciidoc[]
