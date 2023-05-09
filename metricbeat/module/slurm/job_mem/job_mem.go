@@ -3,12 +3,10 @@ package job_mem
 import (
 	"fmt"
 	"os"
-	//"log"
 	"strings"
 	"strconv"
 
 	"github.com/elastic/elastic-agent-libs/mapstr"
-	//"github.com/elastic/beats/v7/libbeat/common/cfgwarn"
 	"github.com/elastic/beats/v7/metricbeat/mb"
 )
 
@@ -28,14 +26,12 @@ func init() {
 // interface methods except for Fetch.
 type MetricSet struct {
 	mb.BaseMetricSet
-	//counter int
 	maxusage int
 }
 
 // New creates a new instance of the MetricSet. New is responsible for unpacking
 // any MetricSet specific configuration options if there are any.
 func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
-	//cfgwarn.Beta("The slurm job_mem metricset is beta.")
 	slurmdir = "/sys/fs/cgroup/memory/slurm"
 
 	config := struct{}{}
@@ -45,7 +41,6 @@ func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 
 	return &MetricSet{
 		BaseMetricSet: base,
-		//counter:       1,
 		maxusage: 0,
 	}, nil
 }
@@ -93,13 +88,6 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 			}
 		}
 	}
-
-	/*report.Event(mb.Event{
-		MetricSetFields: mapstr.M{
-			"counter": m.counter,
-		},
-	})
-	m.counter++*/
 
 	return nil
 }
