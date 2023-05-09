@@ -3,16 +3,16 @@ package job_mem
 import (
 	"fmt"
 	"os"
-	"log"
+	//"log"
 	"strings"
 	"strconv"
 
 	"github.com/elastic/elastic-agent-libs/mapstr"
-	"github.com/elastic/beats/v7/libbeat/common/cfgwarn"
+	//"github.com/elastic/beats/v7/libbeat/common/cfgwarn"
 	"github.com/elastic/beats/v7/metricbeat/mb"
 )
 
-slurmdir := "/sys/fs/cgroup/memory/slurm"
+var slurmdir string
 
 // init registers the MetricSet with the central registry as soon as the program
 // starts. The New function will be called later to instantiate an instance of
@@ -36,6 +36,7 @@ type MetricSet struct {
 // any MetricSet specific configuration options if there are any.
 func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 	//cfgwarn.Beta("The slurm job_mem metricset is beta.")
+	slurmdir = "/sys/fs/cgroup/memory/slurm"
 
 	config := struct{}{}
 	if err := base.Module().UnpackConfig(&config); err != nil {
@@ -77,7 +78,7 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 						m.Logger().Errorf("failed to get value of memory.max_usage_in_bytes: %s", err)
 						continue
 					}
-					maxusage, err = strconv.Atoi(strings.TrimSpace(string(usageval)))
+					m.maxusage, err = strconv.Atoi(strings.TrimSpace(string(usageval)))
 					if err != nil {
 						m.Logger().Errorf("failed to parse value of memory.max_usage_in_bytes as int: %s", err)
 						continue
