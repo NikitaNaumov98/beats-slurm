@@ -11,6 +11,7 @@ import (
 )
 
 var slurmdir string
+var steps bool
 
 // init registers the MetricSet with the central registry as soon as the program
 // starts. The New function will be called later to instantiate an instance of
@@ -26,7 +27,10 @@ func init() {
 // interface methods except for Fetch.
 type MetricSet struct {
 	mb.BaseMetricSet
-	maxusage int
+	uid int
+	jobid int
+	step string
+	memusage int
 }
 
 // New creates a new instance of the MetricSet. New is responsible for unpacking
@@ -41,7 +45,10 @@ func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 
 	return &MetricSet{
 		BaseMetricSet: base,
-		maxusage: 0,
+		uid: 0,
+		jobid: 0,
+		step: "",
+		memusage: 0,
 	}, nil
 }
 
@@ -51,6 +58,7 @@ func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 	var curr_uid_dir string
 	var curr_job_dir string
+	var curr_step_dir string
 
 	entries, err := os.ReadDir(slurmdir)
 	if err != nil {
@@ -59,29 +67,67 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 
 	for _, e := range entries {
 		if strings.HasPrefix(e.Name(), "uid_") {
+			m.uid, err = strconv.Atoi(strings.Split(e.Name(), "_")[1])
+			if err != nil {
+				m.Logger().Errorf("failed to convert uid into int: %s", err)
+				continue
+			}
 			curr_uid_dir = slurmdir + "/" + e.Name()
 			entries_uid, err := os.ReadDir(curr_uid_dir)
 			if err != nil {
-				m.Logger().Errorf("failed to access directories associated with jobs: %s", err)
+				m.Logger().Errorf("failed to access directories associated with uid: %s", err)
 				continue
 			}
 			for _, f := range entries_uid {
 				if strings.HasPrefix(f.Name(), "job_") {
-					curr_job_dir = curr_uid_dir + "/" + f.Name() + "/"
-					usageval, err := os.ReadFile(curr_job_dir + "memory.max_usage_in_bytes")
+					steps = false
+					m.jobid, err = strconv.Atoi(strings.Split(f.Name(), "_")[1])
 					if err != nil {
-						m.Logger().Errorf("failed to get value of memory.max_usage_in_bytes: %s", err)
+						m.Logger().Errorf("failed to convert jobid into int: %s", err)
 						continue
 					}
-					m.maxusage, err = strconv.Atoi(strings.TrimSpace(string(usageval)))
+					curr_job_dir = curr_uid_dir + "/" + f.Name() + "/"
+					entries_job, err := os.ReadDir(curr_job_dir)
 					if err != nil {
-						m.Logger().Errorf("failed to parse value of memory.max_usage_in_bytes as int: %s", err)
+						m.Logger().Errorf("failed to access directories associated with jobs: %s", err)
 						continue
+					}
+					for _, g := range entries_job {
+						if strings.HasPrefix(g.Name(), "step_") {
+							steps = true
+							m.step = strings.Split(g.Name(), "_")[1]
+							curr_step_dir = curr_job_dir + g.Name() + "/"
+							usageval, err := os.ReadFile(curr_step_dir + "memory.usage_in_bytes")
+							if err != nil {
+								m.Logger().Errorf("failed to get value of memory.usage_in_bytes: %s", err)
+								continue
+							}
+							m.memusage, err = strconv.Atoi(strings.TrimSpace(string(usageval)))
+							if err != nil {
+								m.Logger().Errorf("failed to parse value of memory.usage_in_bytes as int: %s", err)
+								continue
+							}
+						}
+					}
+					if !steps {
+						usageval, err := os.ReadFile(curr_job_dir + "memory.max_usage_in_bytes")
+						if err != nil {
+							m.Logger().Errorf("failed to get value of memory.max_usage_in_bytes: %s", err)
+							continue
+						}
+						m.memusage, err = strconv.Atoi(strings.TrimSpace(string(usageval)))
+						if err != nil {
+							m.Logger().Errorf("failed to parse value of memory.max_usage_in_bytes as int: %s", err)
+							continue
+						}
 					}
 
 					report.Event(mb.Event{
 						MetricSetFields: mapstr.M{
-							"maxusage": m.maxusage,
+							"uid": m.uid,
+							"jobid": m.jobid,
+							"step": m.step,
+							"memusage": m.memusage,
 						},
 					})
 				}
