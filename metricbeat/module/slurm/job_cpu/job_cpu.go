@@ -5,6 +5,9 @@ import (
 	"github.com/elastic/beats/v7/metricbeat/mb"
 )
 
+var slurmdir string
+var steps bool
+
 // init registers the MetricSet with the central registry as soon as the program
 // starts. The New function will be called later to instantiate an instance of
 // the MetricSet for each host defined in the module's configuration. After the
@@ -19,7 +22,9 @@ func init() {
 // interface methods except for Fetch.
 type MetricSet struct {
 	mb.BaseMetricSet
-	counter int
+	uid int
+	jobid int
+	step string
 }
 
 // New creates a new instance of the MetricSet. New is responsible for unpacking
@@ -33,7 +38,9 @@ func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 
 	return &MetricSet{
 		BaseMetricSet: base,
-		counter:       1,
+		uid: 0,
+		jobid: 0,
+		step: "",
 	}, nil
 }
 
@@ -41,12 +48,64 @@ func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 // format. It publishes the event which is then forwarded to the output. In case
 // of an error set the Error field of mb.Event or simply call report.Error().
 func (m *MetricSet) Fetch(report mb.ReporterV2) error {
-	report.Event(mb.Event{
-		MetricSetFields: mapstr.M{
-			"counter": m.counter,
-		},
-	})
-	m.counter++
+	var curr_uid_dir string
+	var curr_job_dir string
+	var curr_step_dir string
+
+	entries, err := os.ReadDir(slurmdir)
+	if err != nil {
+		return fmt.Errorf("failed to access slurm cgroup directory: %w", err)
+	}
+
+	for _, e := range entries {
+		if strings.HasPrefix(e.Name(), "uid_") {
+			m.uid, err = strconv.Atoi(strings.Split(e.Name(), "_")[1])
+			if err != nil {
+				m.Logger().Errorf("failed to convert uid into int: %s", err)
+				continue
+			}
+			curr_uid_dir = slurmdir + "/" + e.Name()
+			entries_uid, err := os.ReadDir(curr_uid_dir)
+			if err != nil {
+				m.Logger().Errorf("failed to access directories associated with uid: %s", err)
+				continue
+			}
+			for _, f := range entries_uid {
+				if strings.HasPrefix(f.Name(), "job_") {
+					steps = false
+					m.jobid, err = strconv.Atoi(strings.Split(f.Name(), "_")[1])
+					if err != nil {
+						m.Logger().Errorf("failed to convert jobid into int: %s", err)
+						continue
+					}
+					curr_job_dir = curr_uid_dir + "/" + f.Name() + "/"
+					entries_job, err := os.ReadDir(curr_job_dir)
+					if err != nil {
+						m.Logger().Errorf("failed to access directories associated with jobs: %s", err)
+						continue
+					}
+					for _, g := range entries_job {
+						if strings.HasPrefix(g.Name(), "step_") {
+							steps = true
+							m.step = strings.Split(g.Name(), "_")[1]
+							curr_step_dir = curr_job_dir + g.Name() + "/"
+						}
+					}
+					if !steps {
+
+					}
+
+					report.Event(mb.Event{
+						MetricSetFields: mapstr.M{
+							"uid": m.uid,
+							"jobid": m.jobid,
+							"step": m.step,
+						},
+					})
+				}
+			}
+		}
+	}
 
 	return nil
 }
