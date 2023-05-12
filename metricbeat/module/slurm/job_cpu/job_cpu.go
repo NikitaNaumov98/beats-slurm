@@ -1,6 +1,11 @@
 package job_cpu
 
 import (
+	"fmt"
+	"os"
+	"strings"
+	"strconv"
+
 	"github.com/elastic/elastic-agent-libs/mapstr"
 	"github.com/elastic/beats/v7/metricbeat/mb"
 )
