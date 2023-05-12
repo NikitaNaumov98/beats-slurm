@@ -55,7 +55,7 @@ func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 	var curr_uid_dir string
 	var curr_job_dir string
-	var curr_step_dir string
+	//var curr_step_dir string
 
 	entries, err := os.ReadDir(slurmdir)
 	if err != nil {
@@ -93,7 +93,7 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 						if strings.HasPrefix(g.Name(), "step_") {
 							steps = true
 							m.step = strings.Split(g.Name(), "_")[1]
-							curr_step_dir = curr_job_dir + g.Name() + "/"
+							//curr_step_dir = curr_job_dir + g.Name() + "/"
 						}
 					}
 					if !steps {
