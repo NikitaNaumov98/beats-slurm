@@ -31,6 +31,7 @@ type MetricSet struct {
 	jobid int
 	step string
 	memusage int
+	memreq int
 }
 
 // New creates a new instance of the MetricSet. New is responsible for unpacking
@@ -45,10 +46,11 @@ func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 
 	return &MetricSet{
 		BaseMetricSet: base,
-		uid: 0,
-		jobid: 0,
+		uid: -1,
+		jobid: -1,
 		step: "",
-		memusage: 0,
+		memusage: -1,
+		memreq: -1,
 	}, nil
 }
 
@@ -70,7 +72,6 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 			m.uid, err = strconv.Atoi(strings.Split(e.Name(), "_")[1])
 			if err != nil {
 				m.Logger().Errorf("failed to convert uid into int: %s", err)
-				continue
 			}
 			curr_uid_dir = slurmdir + "/" + e.Name()
 			entries_uid, err := os.ReadDir(curr_uid_dir)
@@ -84,7 +85,6 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 					m.jobid, err = strconv.Atoi(strings.Split(f.Name(), "_")[1])
 					if err != nil {
 						m.Logger().Errorf("failed to convert jobid into int: %s", err)
-						continue
 					}
 					curr_job_dir = curr_uid_dir + "/" + f.Name() + "/"
 					entries_job, err := os.ReadDir(curr_job_dir)
@@ -97,28 +97,40 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 							steps = true
 							m.step = strings.Split(g.Name(), "_")[1]
 							curr_step_dir = curr_job_dir + g.Name() + "/"
-							usageval, err := os.ReadFile(curr_step_dir + "memory.usage_in_bytes")
+							readval, err := os.ReadFile(curr_step_dir + "memory.usage_in_bytes")
 							if err != nil {
 								m.Logger().Errorf("failed to get value of memory.usage_in_bytes: %s", err)
-								continue
 							}
-							m.memusage, err = strconv.Atoi(strings.TrimSpace(string(usageval)))
+							m.memusage, err = strconv.Atoi(strings.TrimSpace(string(readval)))
 							if err != nil {
 								m.Logger().Errorf("failed to parse value of memory.usage_in_bytes as int: %s", err)
-								continue
+							}
+							readval, err = os.ReadFile(curr_step_dir + "memory.limit_in_bytes")
+							if err != nil {
+								m.Logger().Errorf("failed to get value of memory.limit_in_bytes: %s", err)
+							}
+							m.memreq, err = strconv.Atoi(strings.TrimSpace(string(readval)))
+							if err != nil {
+								m.Logger().Errorf("failed to parse value of memory.limit_in_bytes as int: %s", err)
 							}
 						}
 					}
 					if !steps {
-						usageval, err := os.ReadFile(curr_job_dir + "memory.max_usage_in_bytes")
+						readval, err := os.ReadFile(curr_job_dir + "memory.max_usage_in_bytes")
 						if err != nil {
 							m.Logger().Errorf("failed to get value of memory.max_usage_in_bytes: %s", err)
-							continue
 						}
-						m.memusage, err = strconv.Atoi(strings.TrimSpace(string(usageval)))
+						m.memusage, err = strconv.Atoi(strings.TrimSpace(string(readval)))
 						if err != nil {
 							m.Logger().Errorf("failed to parse value of memory.max_usage_in_bytes as int: %s", err)
-							continue
+						}
+						readval, err = os.ReadFile(curr_step_dir + "memory.limit_in_bytes")
+						if err != nil {
+							m.Logger().Errorf("failed to get value of memory.limit_in_bytes: %s", err)
+						}
+						m.memreq, err = strconv.Atoi(strings.TrimSpace(string(readval)))
+						if err != nil {
+							m.Logger().Errorf("failed to parse value of memory.limit_in_bytes as int: %s", err)
 						}
 					}
 
@@ -128,6 +140,7 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 							"jobid": m.jobid,
 							"step": m.step,
 							"memusage": m.memusage,
+							"memreq": m.memreq,
 						},
 					})
 				}

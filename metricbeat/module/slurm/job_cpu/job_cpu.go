@@ -68,7 +68,6 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 			m.uid, err = strconv.Atoi(strings.Split(e.Name(), "_")[1])
 			if err != nil {
 				m.Logger().Errorf("failed to convert uid into int: %s", err)
-				continue
 			}
 			curr_uid_dir = slurmdir + "/" + e.Name()
 			entries_uid, err := os.ReadDir(curr_uid_dir)
@@ -82,7 +81,6 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 					m.jobid, err = strconv.Atoi(strings.Split(f.Name(), "_")[1])
 					if err != nil {
 						m.Logger().Errorf("failed to convert jobid into int: %s", err)
-						continue
 					}
 					curr_job_dir = curr_uid_dir + "/" + f.Name() + "/"
 					entries_job, err := os.ReadDir(curr_job_dir)
