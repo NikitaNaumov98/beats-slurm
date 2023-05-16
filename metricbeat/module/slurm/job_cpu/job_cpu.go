@@ -3,11 +3,10 @@ package job_cpu
 import (
 	"fmt"
 	"os"
-	"strings"
-	"strconv"
-	"os"
 	"os/exec"
 	"os/user"
+	"strings"
+	"strconv"
 
 	"github.com/elastic/elastic-agent-libs/mapstr"
 	"github.com/elastic/beats/v7/metricbeat/mb"
@@ -92,6 +91,10 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 				m.Logger().Errorf("failed to get username: %s", err)
 			} else {
 				m.job_user = job_user_info.Username
+			}
+			fullcom, err := os.ReadFile("/proc/"+pid_str+"/cmdline")
+			if err != nil {
+				m.Logger().Errorf("failed to get full process command: %s", err)
 			}
 			job_step := strings.Split(strings.Split(string(fullcom), "[")[1], ".")
 			m.jobid, err = strconv.Atoi(job_step[0])
