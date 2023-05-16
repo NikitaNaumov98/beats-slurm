@@ -3,6 +3,7 @@ package job_mem
 import (
 	"fmt"
 	"os"
+	"os/user"
 	"strings"
 	"strconv"
 
@@ -27,7 +28,7 @@ func init() {
 // interface methods except for Fetch.
 type MetricSet struct {
 	mb.BaseMetricSet
-	uid int
+	job_user string
 	jobid int
 	step string
 	memusage int
@@ -46,7 +47,7 @@ func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 
 	return &MetricSet{
 		BaseMetricSet: base,
-		uid: -1,
+		job_user: "",
 		jobid: -1,
 		step: "",
 		memusage: -1,
@@ -69,9 +70,11 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 
 	for _, e := range entries {
 		if strings.HasPrefix(e.Name(), "uid_") {
-			m.uid, err = strconv.Atoi(strings.Split(e.Name(), "_")[1])
+			job_user_info, err = user.LookupId(strings.Split(e.Name(), "_")[1])
 			if err != nil {
-				m.Logger().Errorf("failed to convert uid into int: %s", err)
+				m.Logger().Errorf("failed to get username: %s", err)
+			} else {
+				m.job_user = job_user_info.Username
 			}
 			curr_uid_dir = slurmdir + "/" + e.Name()
 			entries_uid, err := os.ReadDir(curr_uid_dir)
@@ -140,7 +143,7 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 
 					report.Event(mb.Event{
 						MetricSetFields: mapstr.M{
-							"uid": m.uid,
+							"job_user": m.job_user,
 							"jobid": m.jobid,
 							"step": m.step,
 							"memusage": m.memusage,
