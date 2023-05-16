@@ -100,18 +100,20 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 							readval, err := os.ReadFile(curr_step_dir + "memory.usage_in_bytes")
 							if err != nil {
 								m.Logger().Errorf("failed to get value of memory.usage_in_bytes: %s", err)
-							}
-							m.memusage, err = strconv.Atoi(strings.TrimSpace(string(readval)))
-							if err != nil {
-								m.Logger().Errorf("failed to parse value of memory.usage_in_bytes as int: %s", err)
+							} else {
+								m.memusage, err = strconv.Atoi(strings.TrimSpace(string(readval)))
+								if err != nil {
+									m.Logger().Errorf("failed to parse value of memory.usage_in_bytes as int: %s", err)
+								}
 							}
 							readval, err = os.ReadFile(curr_step_dir + "memory.limit_in_bytes")
 							if err != nil {
 								m.Logger().Errorf("failed to get value of memory.limit_in_bytes: %s", err)
-							}
-							m.memreq, err = strconv.Atoi(strings.TrimSpace(string(readval)))
-							if err != nil {
-								m.Logger().Errorf("failed to parse value of memory.limit_in_bytes as int: %s", err)
+							} else {
+								m.memreq, err = strconv.Atoi(strings.TrimSpace(string(readval)))
+								if err != nil {
+									m.Logger().Errorf("failed to parse value of memory.limit_in_bytes as int: %s", err)
+								}
 							}
 						}
 					}
@@ -119,18 +121,20 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 						readval, err := os.ReadFile(curr_job_dir + "memory.max_usage_in_bytes")
 						if err != nil {
 							m.Logger().Errorf("failed to get value of memory.max_usage_in_bytes: %s", err)
-						}
-						m.memusage, err = strconv.Atoi(strings.TrimSpace(string(readval)))
-						if err != nil {
-							m.Logger().Errorf("failed to parse value of memory.max_usage_in_bytes as int: %s", err)
+						} else {
+							m.memusage, err = strconv.Atoi(strings.TrimSpace(string(readval)))
+							if err != nil {
+								m.Logger().Errorf("failed to parse value of memory.max_usage_in_bytes as int: %s", err)
+							}
 						}
 						readval, err = os.ReadFile(curr_step_dir + "memory.limit_in_bytes")
 						if err != nil {
 							m.Logger().Errorf("failed to get value of memory.limit_in_bytes: %s", err)
-						}
-						m.memreq, err = strconv.Atoi(strings.TrimSpace(string(readval)))
-						if err != nil {
-							m.Logger().Errorf("failed to parse value of memory.limit_in_bytes as int: %s", err)
+						} else {
+							m.memreq, err = strconv.Atoi(strings.TrimSpace(string(readval)))
+							if err != nil {
+								m.Logger().Errorf("failed to parse value of memory.limit_in_bytes as int: %s", err)
+							}
 						}
 					}
 
