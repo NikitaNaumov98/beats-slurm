@@ -70,7 +70,7 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 
 	for _, e := range entries {
 		if strings.HasPrefix(e.Name(), "uid_") {
-			job_user_info, err = user.LookupId(strings.Split(e.Name(), "_")[1])
+			job_user_info, err := user.LookupId(strings.Split(e.Name(), "_")[1])
 			if err != nil {
 				m.Logger().Errorf("failed to get username: %s", err)
 			} else {
