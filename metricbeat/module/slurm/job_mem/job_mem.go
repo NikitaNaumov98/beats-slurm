@@ -142,10 +142,12 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 					}
 
 					report.Event(mb.Event{
-						MetricSetFields: mapstr.M{
+						ModuleFields: mapstr.M{
 							"job_user": m.job_user,
 							"jobid": m.jobid,
 							"step": m.step,
+						},
+						MetricSetFields: mapstr.M{
 							"memusage": m.memusage,
 							"memreq": m.memreq,
 						},

@@ -32,6 +32,7 @@ type MetricSet struct {
 	mb.BaseMetricSet
 	job_user string
 	jobid int
+	step string
 	cpuutil float64
 	cpuused float64
 	cpureq float64
@@ -51,6 +52,7 @@ func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 		BaseMetricSet: base,
 		job_user: "",
 		jobid: -1,
+		step: "",
 		cpuutil: -1.0,
 		cpuused: -1.0,
 		cpureq: -1.0,
@@ -102,7 +104,8 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 				m.Logger().Errorf("failed to convert jobid into int: %s", err)
 				continue
 			}
-			curr_step_dir := slurmdir + "/uid_" + job_uid + "/job_" + job_step[0] + "/step_" + strings.TrimSuffix(job_step[1], "]") + "/"
+			m.step = strings.TrimSuffix(job_step[1], "]")
+			curr_step_dir := slurmdir + "/uid_" + job_uid + "/job_" + job_step[0] + "/step_" + m.step + "/"
 			cpus_val, err := os.ReadFile(curr_step_dir + "cpuset.cpus")
 			if err != nil {
 				m.Logger().Errorf("failed to read cpuset.cpus: %s", err)
@@ -154,9 +157,12 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 			m.cpuused = cpuutil_calc * m.cpureq / 100.0
 
 			report.Event(mb.Event{
-				MetricSetFields: mapstr.M{
+				ModuleFields: mapstr.M{
 					"job_user": m.job_user,
 					"jobid": m.jobid,
+					"step": m.step,
+				},
+				MetricSetFields: mapstr.M{
 					"cpuutil": m.cpuutil,
 					"cpuused": m.cpuused,
 					"cpureq": m.cpureq,

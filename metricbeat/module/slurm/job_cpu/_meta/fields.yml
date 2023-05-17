@@ -4,14 +4,6 @@
   description: >
     job_cpu contains metrics associated with CPU usage of jobs.
   fields:
-    - name: job_user
-      type: keyword
-      description: >
-        Username associated with job
-    - name: jobid
-      type: long
-      description: >
-        Job ID
     - name: cpuutil
       type: double
       description: >
