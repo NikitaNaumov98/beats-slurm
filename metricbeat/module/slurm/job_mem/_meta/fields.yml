@@ -2,9 +2,25 @@
   type: group
   release: beta
   description: >
-    job_mem
+    job_mem contains metrics associated with memory usage of jobs.
   fields:
-    - name: example
+    - name: job_user
       type: keyword
       description: >
-        Example field
+        Username associated with job
+    - name: jobid
+      type: long
+      description: >
+        Job ID
+    - name: step
+      type: keyword
+      description: >
+        Job step
+    - name: memusage
+      type: long
+      description: >
+        memory usage of job
+    - name: memreq
+      type: long
+      description: >
+        maximum amount of memory for job

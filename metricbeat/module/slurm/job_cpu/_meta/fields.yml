@@ -2,9 +2,25 @@
   type: group
   release: beta
   description: >
-    job_cpu
+    job_cpu contains metrics associated with CPU usage of jobs.
   fields:
-    - name: example
+    - name: job_user
       type: keyword
       description: >
-        Example field
+        Username associated with job
+    - name: jobid
+      type: long
+      description: >
+        Job ID
+    - name: cpuutil
+      type: double
+      description: >
+        CPU utilization of job
+    - name: cpuused
+      type: double
+      description: >
+        CPU usage of job
+    - name: cpureq
+      type: double
+      description: >
+        CPUs:threads ratio

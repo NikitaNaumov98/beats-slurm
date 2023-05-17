@@ -34,7 +34,7 @@ type MetricSet struct {
 	jobid int
 	cpuutil float64
 	cpuused float64
-	cpureq int
+	cpureq float64
 }
 
 // New creates a new instance of the MetricSet. New is responsible for unpacking
@@ -53,7 +53,7 @@ func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 		jobid: -1,
 		cpuutil: -1.0,
 		cpuused: -1.0,
-		cpureq: -1,
+		cpureq: -1.0,
 	}, nil
 }
 
@@ -128,7 +128,7 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 					cpus += 1
 				}
 			}
-			m.cpureq = cpus / threads_num
+			m.cpureq = float64(cpus / threads_num)
 			cpuutil_calc := 0.0
 			stat, err := os.ReadFile("/proc/"+pid_str+"/stat")
 			if err != nil {
@@ -150,9 +150,8 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 				}
 				cpuutil_calc += num
 			}
-			cpureq_float := float64(m.cpureq)
-			m.cpuutil = cpuutil_calc / cpureq_float
-			m.cpuused = cpuutil_calc * cpureq_float / 100.0
+			m.cpuutil = cpuutil_calc / cpureq
+			m.cpuused = cpuutil_calc * cpureq / 100.0
 
 			report.Event(mb.Event{
 				MetricSetFields: mapstr.M{

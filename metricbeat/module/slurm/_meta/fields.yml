@@ -2,7 +2,7 @@
   title: "slurm"
   release: beta
   description: >
-    slurm module
+    slurm module contains metrics for memory and cpu usage of jobs
   fields:
     - name: slurm
       type: group
