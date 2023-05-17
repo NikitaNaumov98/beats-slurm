@@ -59046,14 +59046,7 @@ slurm module contains metrics for memory and cpu usage of jobs
 
 
 
-[float]
-=== job_cpu
-
-job_cpu contains metrics associated with CPU usage of jobs.
-
-
-
-*`slurm.job_cpu.job_user`*::
+*`slurm.job_user`*::
 +
 --
 Username associated with job
@@ -59063,7 +59056,7 @@ type: keyword
 
 --
 
-*`slurm.job_cpu.jobid`*::
+*`slurm.jobid`*::
 +
 --
 Job ID
@@ -59072,6 +59065,23 @@ Job ID
 type: long
 
 --
+
+*`slurm.step`*::
++
+--
+Job step
+
+
+type: keyword
+
+--
+
+[float]
+=== job_cpu
+
+job_cpu contains metrics associated with CPU usage of jobs.
+
+
 
 *`slurm.job_cpu.cpuutil`*::
 +
@@ -59109,36 +59119,6 @@ type: double
 job_mem contains metrics associated with memory usage of jobs.
 
 
-
-*`slurm.job_mem.job_user`*::
-+
---
-Username associated with job
-
-
-type: keyword
-
---
-
-*`slurm.job_mem.jobid`*::
-+
---
-Job ID
-
-
-type: long
-
---
-
-*`slurm.job_mem.step`*::
-+
---
-Job step
-
-
-type: keyword
-
---
 
 *`slurm.job_mem.memusage`*::
 +
