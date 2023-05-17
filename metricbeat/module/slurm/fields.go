@@ -32,5 +32,5 @@ func init() {
 // AssetSlurm returns asset data.
 // This is the base64 encoded zlib format compressed contents of module/slurm.
 func AssetSlurm() string {
-	return "eJzEj01uwyAUhPecYuS9L8Ciu56jwmZaUYNB/Kj17SubJrEdlF2Ub8d74nszPSYuEsmW6ASQTbaU6LZ3J4BIS5UoMTArAWimMZqQjZ8l3gSA+hfO62IpgE9Dq5PcVj1m5XjTr+QlUOIr+hL+Jw3nUbNXffvhYwzlOm8JV87BLzSPVe7V5xD7IPxVLmyN99QwE5cfH/Vp9+D0ynsV1qPN3o7uWb2P6hf2/gsAAP//8z6o8w=="
+	return "eJzslbFy8jAQhHs/xQ49/wO4+JukSao01BnZOkAg+RydNMR5+oyMScDIZGBIl+ss2fvt6nz2HFvqSoiN3hVAMMFSiVl/PSsAT5aUUImKgioATVJ70wbDTYn/BYD9s3CsoyXU3ARlGoGj4E0tWLKHI8e+g2o06jYiiloReIkNV1IAS0NWS9mLzdEoR9+GUoWupRIrz7EdVjIuTmWOpTZcvdZt/FrPCaYaRz1UFravQfo8tRLh2qhAGjsT1nh4WZzG/nekMzY+Nh+F/MnmIcGWuh17Pdq74DfVQsgn7TOPG66mLJgxY8+33Kyugz9zhafHLKZuYwzGZkGaY2XpOlR/5MFY86HSLcPBT6KF8hlvRh91ewrq6e2eTCnD2pPSAp8iZwfBkfutQXDkfh6E4VPwNwsXZ0ECtfdLmUBnigeUI9c3406hMv2dwk69/TdA1btx0UE5jk1I2MFG+vkkB58BAAD//z6TyPc="
 }

@@ -59036,7 +59036,7 @@ Redis metrics collected from Redis Enterprise Server.
 [[exported-fields-slurm]]
 == slurm fields
 
-slurm module
+slurm module contains metrics for memory and cpu usage of jobs
 
 
 
@@ -59049,34 +59049,114 @@ slurm module
 [float]
 === job_cpu
 
-job_cpu
+job_cpu contains metrics associated with CPU usage of jobs.
 
 
 
-*`slurm.job_cpu.example`*::
+*`slurm.job_cpu.job_user`*::
 +
 --
-Example field
+Username associated with job
 
 
 type: keyword
+
+--
+
+*`slurm.job_cpu.jobid`*::
++
+--
+Job ID
+
+
+type: long
+
+--
+
+*`slurm.job_cpu.cpuutil`*::
++
+--
+CPU utilization of job
+
+
+type: double
+
+--
+
+*`slurm.job_cpu.cpuused`*::
++
+--
+CPU usage of job
+
+
+type: double
+
+--
+
+*`slurm.job_cpu.cpureq`*::
++
+--
+CPUs:threads ratio
+
+
+type: double
 
 --
 
 [float]
 === job_mem
 
-job_mem
+job_mem contains metrics associated with memory usage of jobs.
 
 
 
-*`slurm.job_mem.example`*::
+*`slurm.job_mem.job_user`*::
 +
 --
-Example field
+Username associated with job
 
 
 type: keyword
+
+--
+
+*`slurm.job_mem.jobid`*::
++
+--
+Job ID
+
+
+type: long
+
+--
+
+*`slurm.job_mem.step`*::
++
+--
+Job step
+
+
+type: keyword
+
+--
+
+*`slurm.job_mem.memusage`*::
++
+--
+memory usage of job
+
+
+type: long
+
+--
+
+*`slurm.job_mem.memreq`*::
++
+--
+maximum amount of memory for job
+
+
+type: long
 
 --
 
