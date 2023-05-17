@@ -1,6 +1,6 @@
 - key: slurm
   title: "slurm"
-  release: beta
+  release: ga
   description: >
     slurm module contains metrics for memory and cpu usage of jobs
   fields:

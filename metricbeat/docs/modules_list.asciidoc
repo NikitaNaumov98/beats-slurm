@@ -268,7 +268,7 @@ This file is generated! See scripts/mage/docs_collector.go
 |<<metricbeat-module-redisenterprise,Redis Enterprise>>  beta[]   |image:./images/icon-yes.png[Prebuilt dashboards are available]    |  
 .2+| .2+|  |<<metricbeat-metricset-redisenterprise-node,node>> beta[]  
 |<<metricbeat-metricset-redisenterprise-proxy,proxy>> beta[]  
-|<<metricbeat-module-slurm,slurm>>  beta[]   |image:./images/icon-no.png[No prebuilt dashboards]    |  
+|<<metricbeat-module-slurm,slurm>>     |image:./images/icon-no.png[No prebuilt dashboards]    |  
 .2+| .2+|  |<<metricbeat-metricset-slurm-job_cpu,job_cpu>> beta[]  
 |<<metricbeat-metricset-slurm-job_mem,job_mem>> beta[]  
 |<<metricbeat-module-sql,SQL>>     |image:./images/icon-no.png[No prebuilt dashboards]    |  

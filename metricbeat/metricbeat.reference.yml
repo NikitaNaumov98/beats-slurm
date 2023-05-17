@@ -938,7 +938,6 @@ metricbeat.modules:
   metricsets:
     - job_cpu
     - job_mem
-  enabled: false
   period: 10s
   hosts: ["localhost"]
 

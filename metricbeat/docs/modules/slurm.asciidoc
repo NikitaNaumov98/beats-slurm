@@ -9,8 +9,6 @@ This file is generated! See scripts/mage/docs_collector.go
 [[metricbeat-module-slurm]]
 == slurm module
 
-beta[]
-
 This is the slurm module.
 
 
@@ -30,7 +28,6 @@ metricbeat.modules:
   metricsets:
     - job_cpu
     - job_mem
-  enabled: false
   period: 10s
   hosts: ["localhost"]
 
