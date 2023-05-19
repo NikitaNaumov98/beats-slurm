@@ -41,7 +41,22 @@ type MetricSet struct {
 // New creates a new instance of the MetricSet. New is responsible for unpacking
 // any MetricSet specific configuration options if there are any.
 func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
-	slurmdir = "/sys/fs/cgroup/cpuset/slurm"
+	cgroup_conf, err := os.ReadFile("/etc/slurm/cgroup.conf")
+	if err != nil {
+		slurmdir = "/sys/fs/cgroup/cpuset/slurm"
+	} else {
+		for _, entr := range cgroup_conf {
+			if strings.HasPrefix(string(entr), "CgroupMountpoint") {
+				entr_str := string(entr)
+				entr_mnt := strings.Split(entr_str, "=")
+				if entr_mnt[1] != "" {
+					slurmdir = entr_mnt[1] + "/cpuset/slurm"
+					break
+				}
+			}
+			slurmdir = "/sys/fs/cgroup/cpuset/slurm"
+		}
+	}
 
 	config := struct{}{}
 	if err := base.Module().UnpackConfig(&config); err != nil {
