@@ -154,7 +154,10 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 				cpuutil_calc += num
 			}
 			m.cpuutil = cpuutil_calc / m.cpureq
-			m.cpuused = cpuutil_calc / 100.0
+			if m.cpuutil > 100.0 {
+				m.cpuutil = 100.0
+			}
+			m.cpuused = m.cpuutil * m.cpureq / 100.0
 
 			report.Event(mb.Event{
 				ModuleFields: mapstr.M{
