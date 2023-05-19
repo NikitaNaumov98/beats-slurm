@@ -49,11 +49,15 @@ func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
 			if strings.HasPrefix(string(entr), "CgroupMountpoint") {
 				entr_str := string(entr)
 				entr_mnt := strings.Split(entr_str, "=")
-				if entr_mnt[1] != "" {
-					slurmdir = entr_mnt[1] + "/cpuset/slurm"
-					break
+				if len(entr_mnt) > 1 {
+					if strings.TrimSpace(entr_mnt[1]) != "" {
+						slurmdir = strings.TrimSpace(entr_mnt[1]) + "/cpuset/slurm"
+						break
+					}
 				}
 			}
+		}
+		if slurmdir == "" {
 			slurmdir = "/sys/fs/cgroup/cpuset/slurm"
 		}
 	}
